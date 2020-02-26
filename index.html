@@ -103,7 +103,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://shenyingzhang.fun/2020/02/26/Working-SDS011-with-ESP32-DevkitV4/" data-id="ck72jt0uv0000o8w576spcpew"
+      <a data-url="http://shenyingzhang.fun/2020/02/26/Working-SDS011-with-ESP32-DevkitV4/" data-id="ck72jys9h0002v4w50t6h0ol6"
          class="article-share-link">Share</a>
       
     </footer>
@@ -188,11 +188,82 @@
 <blockquote>
 </blockquote>
 <p><a href="https://www.purpleair.com/map?opt=1/mAQI/a10/cC0&key=BNY6ZTWXKY5G8X8A&select=46529#12.47/55.59875/12.99819" target="_blank" rel="noopener">https://www.purpleair.com/map?opt=1/mAQI/a10/cC0&amp;key=BNY6ZTWXKY5G8X8A&amp;select=46529#12.47/55.59875/12.99819</a></p>
+<hr>
+<p>This is another small testing about AirQuality sensor,<br>instead of buying integrated sensor, I bought SDS011 PM laser sensor for testing.</p>
+<hr>
+<h2 id="Working-SDS011-with-ESP32-DevkitV4"><a href="#Working-SDS011-with-ESP32-DevkitV4" class="headerlink" title="Working SDS011 with ESP32 DevkitV4"></a>Working SDS011 with ESP32 DevkitV4</h2><p><strong>Components:</strong></p>
+<p>SDS011 PM2.5, PM10 SENSOR</p>
+<p>ESP32</p>
+<hr>
+<p><strong>TO START</strong></p>
+<p> you need to prepare the configuration of ESP32 and set the correct library, which can be followed by<br><a href="https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html" target="_blank" rel="noopener" title="Get Start!">https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
+</a></p>
+<p>since this tutorial is just a simple getting feedback from SDS011. I will just use arduino IDE for it.</p>
+<ol>
+<li>downloading the library for the SDS011</li>
+<li>Since ESP32 can only use hardwareserial for SDS011, so I am going to use hardwareserail</li>
+<li>select the proper/correct board of your ESP32 and Port, if there is no port showing up(check here <a href="https://docs.espressif.com/projects/esp-idf/en/latest/get-started/establish-serial-connection.html" target="_blank" rel="noopener" title="check here">https://docs.espressif.com/projects/esp-idf/en/latest/get-started/establish-serial-connection.html</a>)</li>
+<li>Find the pinout for your ESP32</li>
+<li>Code</li>
+</ol>
+<p>*</p>
+<pre><code>#include &quot;SDS011.h**
+#define debugSerial Serial 
+#define DEBUG
+#ifdef DEBUG
+#defineDEBUG_PRINT( ... )   { debugSerial.print(__VA_ARGS__); }
+#defineDEBUG_PRINTLN( ... ) { debugSerial.println(__VA_ARGS__); }
+#else
+#defineDEBUG_PRINT(...)
+#defineDEBUG_PRINTLN(...)
+#endif
+
+HardwareSerial sdsSerial(2);
+SDS011 sdsSensor;   // fine dust sensor
+#define SDS_PIN_TX 22
+#define SDS_PIN_RX 23
+
+// the results of the sensor SDS011
+float pm25; 
+float pm10;
+
+void setup() {
+  Serial.begin(115200);
+  sdsSerial.begin(9600, SERIAL_8N1, SDS_PIN_RX, SDS_PIN_TX);
+  sdsSensor.begin (&amp;sdsSerial);
+}
+
+void loop() {
+  char buffer[10+1];
+
+  DEBUG_PRINTLN(&quot;in loop&quot;);
+int sdsErrorCode = sdsSensor.read(&amp;pm25, &amp;pm10);
+if (!sdsErrorCode)
+{
+DEBUG_PRINT(&quot;PM2.5: &quot;);
+dtostrf( pm25, 6, 2, buffer);
+DEBUG_PRINTLN( buffer );
+DEBUG_PRINT(&quot;PM10:  &quot;);
+dtostrf( pm10, 6, 2, buffer);
+DEBUG_PRINTLN( buffer );
+}
+else
+{
+pm25 = pm10 = 0;
+DEBUG_PRINT(&quot;SDS Error Code: &quot;);
+DEBUG_PRINTLN(sdsErrorCode);
+}
+delay (10000);
+return;
+} </code></pre><p>And the results can be seen on the monitor</p>
+<blockquote>
+<p>in loop<br>PM2.5:   0.90<br>PM10:    6.10<br>in loop<br>PM2.5:   1.00<br>PM10:    6.30<br>in loop<br>PM2.5:   1.00<br>PM10:    6.30<br>in loop<br>PM2.5:   1.00<br>PM10:    5.10<br>in loop<br>PM2.5:   1.00<br>PM10:    3.70<br>in loop<br>PM2.5:   1.00<br>PM10:    4.20<br>in loop<br>PM2.5:   1.00<br>PM10:    3.40<br>in loop<br>PM2.5:   0.90<br>PM10:    3.70<br>in loop<br>PM2.5:   0.90<br>PM10:    3.50</p>
+</blockquote>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://shenyingzhang.fun/2020/02/18/AirQuality/" data-id="ck72joet00000zcw548nda66r"
+      <a data-url="http://shenyingzhang.fun/2020/02/18/AirQuality/" data-id="ck72jys8t0000v4w585rmc3dv"
          class="article-share-link">Share</a>
       
     </footer>
@@ -289,7 +360,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://shenyingzhang.fun/2020/01/28/Welcome-to-Shenying-s-blog/" data-id="ck72joetr0001zcw53mrogleo"
+      <a data-url="http://shenyingzhang.fun/2020/01/28/Welcome-to-Shenying-s-blog/" data-id="ck72jys9d0001v4w5baz5fq1l"
          class="article-share-link">Share</a>
       
     </footer>
@@ -373,7 +444,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://shenyingzhang.fun/2020/01/28/test-my-site/" data-id="ck72joeu20003zcw5csigbhje"
+      <a data-url="http://shenyingzhang.fun/2020/01/28/test-my-site/" data-id="ck72jys9k0003v4w5dkv3c9k0"
          class="article-share-link">Share</a>
       
     </footer>
@@ -470,7 +541,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://shenyingzhang.fun/2020/01/28/hello-world/" data-id="ck72joetx0002zcw52g6wcvsi"
+      <a data-url="http://shenyingzhang.fun/2020/01/28/hello-world/" data-id="ck72jys9o0004v4w5dhhfakbe"
          class="article-share-link">Share</a>
       
     </footer>
