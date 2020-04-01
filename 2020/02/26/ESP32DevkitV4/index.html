@@ -59,8 +59,6 @@
 
     
       
-    <div class="tocbot"></div>
-
 
 
 
@@ -76,82 +74,81 @@
       
         <hr>
 <p>layout: working<br>title: Working SDS011 with ESP32 DevkitV4<br>date: 2020-02-26 00:15:05<br>tags:SDS011<br>Working SDS011 with ESP32 DevkitV4</p>
+<hr>
+<p><strong>Components:</strong></p>
+<p>SDS011 PM2.5, PM10 SENSOR</p>
+<p>ESP32</p>
+<hr>
+<p><strong>TO START</strong></p>
+<p> you need to prepare the configuration of ESP32 and set the correct library, which can be followed by<br><a href="https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html" target="_blank" rel="noopener" title="Get Start!">https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
+</a></p>
+<p>since this tutorial is just a simple getting feedback from SDS011. I will just use arduino IDE for it.</p>
+<ol>
+<li>downloading the library for the SDS011</li>
+<li>Since ESP32 can only use hardwareserial for SDS011, so I am going to use hardwareserail</li>
+<li>select the proper/correct board of your ESP32 and Port, if there is no port showing up(check here <a href="https://docs.espressif.com/projects/esp-idf/en/latest/get-started/establish-serial-connection.html" target="_blank" rel="noopener" title="check here">https://docs.espressif.com/projects/esp-idf/en/latest/get-started/establish-serial-connection.html</a>)</li>
+<li>Find the pinout for your ESP32</li>
+<li>Code</li>
+</ol>
+<p>*</p>
+<pre><code>#include &quot;SDS011.h**
+#define debugSerial Serial 
+#define DEBUG
+#ifdef DEBUG
+#defineDEBUG_PRINT( ... )   { debugSerial.print(__VA_ARGS__); }
+#defineDEBUG_PRINTLN( ... ) { debugSerial.println(__VA_ARGS__); }
+#else
+#defineDEBUG_PRINT(...)
+#defineDEBUG_PRINTLN(...)
+#endif
+
+HardwareSerial sdsSerial(2);
+SDS011 sdsSensor;   // fine dust sensor
+#define SDS_PIN_TX 22
+#define SDS_PIN_RX 23
+
+// the results of the sensor SDS011
+float pm25; 
+float pm10;
+
+void setup() {
+  Serial.begin(115200);
+  sdsSerial.begin(9600, SERIAL_8N1, SDS_PIN_RX, SDS_PIN_TX);
+  sdsSensor.begin (&amp;sdsSerial);
+}
+
+void loop() {
+  char buffer[10+1];
+
+  DEBUG_PRINTLN(&quot;in loop&quot;);
+int sdsErrorCode = sdsSensor.read(&amp;pm25, &amp;pm10);
+if (!sdsErrorCode)
+{
+DEBUG_PRINT(&quot;PM2.5: &quot;);
+dtostrf( pm25, 6, 2, buffer);
+DEBUG_PRINTLN( buffer );
+DEBUG_PRINT(&quot;PM10:  &quot;);
+dtostrf( pm10, 6, 2, buffer);
+DEBUG_PRINTLN( buffer );
+}
+else
+{
+pm25 = pm10 = 0;
+DEBUG_PRINT(&quot;SDS Error Code: &quot;);
+DEBUG_PRINTLN(sdsErrorCode);
+}
+delay (10000);
+return;
+} </code></pre><p>And the results can be seen on the monitor</p>
 <blockquote>
-<p>This user manual is designed  for the System Engineering course in Kristianstad .</p>
+<p>in loop<br>PM2.5:   0.90<br>PM10:    6.10<br>in loop<br>PM2.5:   1.00<br>PM10:    6.30<br>in loop<br>PM2.5:   1.00<br>PM10:    6.30<br>in loop<br>PM2.5:   1.00<br>PM10:    5.10<br>in loop<br>PM2.5:   1.00<br>PM10:    3.70<br>in loop<br>PM2.5:   1.00<br>PM10:    4.20<br>in loop<br>PM2.5:   1.00<br>PM10:    3.40<br>in loop<br>PM2.5:   0.90<br>PM10:    3.70<br>in loop<br>PM2.5:   0.90<br>PM10:    3.50</p>
 </blockquote>
 <hr>
-<h1 id="User-guide"><a href="#User-guide" class="headerlink" title="User guide"></a>User guide</h1><ol>
-<li><p>System overview </p>
-</li>
-<li><p>Function</p>
-</li>
-<li><p>Configuration </p>
-</li>
-<li><p>Debug</p>
-</li>
-</ol>
-<ol>
-<li><p>Developer guide </p>
-</li>
-<li><p>Contact Us!</p>
-</li>
-</ol>
-<hr>
-<h2 id="1-SYSTEM-DIAGRAM"><a href="#1-SYSTEM-DIAGRAM" class="headerlink" title="1.SYSTEM DIAGRAM"></a>1.SYSTEM DIAGRAM</h2><p><img src="https://i.loli.net/2020/04/02/aAYHthoKjf4EZCd.png" alt="image.png"><br>Air Quality sensor, providing ongoing real-time data for Particulate Matter (PM)</p>
-<p>Components/ environment required</p>
-<ol>
-<li><p>5V power</p>
-</li>
-<li><p>Wifi environment [default SSID:test; PSD:12345678]</p>
-</li>
-</ol>
-<h2 id="2-Functionality"><a href="#2-Functionality" class="headerlink" title="2. Functionality"></a>2. Functionality</h2><p>Real-time air quality data provided in line charts for PM2.5, PM10, temperature, and pressure. The data is updated for every 2s.<br>The visualization of the data is placed on web which can be read without restriction of time and location.</p>
-<p>For example, here</p>
-<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/1013888/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
-<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/1013888/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&title=PM+10&type=line&xaxis=Time&yaxis=pm10%28%C2%B5g%2Fm%C2%B3%29"></iframe>
-
-<p>or visit</p>
-<p><a href="https://thingspeak.com/channels/1013888" target="_blank" rel="noopener">https://thingspeak.com/channels/1013888</a></p>
-<h2 id="3-Configuration"><a href="#3-Configuration" class="headerlink" title="3.Configuration"></a>3.Configuration</h2><p>Set the environment for the sensor. </p>
-<p>We suggest you to set it outside as in the feature as the device is provided with a hanger to hang itself.</p>
-<p>Set the Wifi name and password on a hot-spot enable device (Windows 10)<br>Restart the device<br>After waiting for 30s, the sensor should be working, and data can be read on ThingSpeak. </p>
-<h2 id="4-Debug"><a href="#4-Debug" class="headerlink" title="4.Debug"></a>4.Debug</h2><p>Device Debugging<br>Q. There is no data on the ThingSpeak channels.<br>A: 1. Check the WiFi connection and power first and check if you can hear the sound of the fan.</p>
-<pre><code>2. If the above steps are working, try to restart the device. 
-3. If it is still not working, try to read the developer manual that we provide and follow with the ESP32 configuration to set up a new WiFi connection. 
-4. If it failed, try to contact us/ or using developer guide.</code></pre><h2 id="5-Developer-guide"><a href="#5-Developer-guide" class="headerlink" title="5.Developer guide"></a>5.Developer guide</h2><p>Developer configuration document</p>
-<p><strong>Prerequisites</strong></p>
-<p>To get started with ESP32-DevKitC V4 development board, </p>
-<p>follow the instructions from<a href="https://docs.espressif.com/projects/esp-idf/en/v3.3/get-started/get-started-devkitc.html" target="_blank" rel="noopener"> ESP32-DevKitC V4</a> Getting Started Guide  uploaded by the developer for configuring ESP32.</p>
-<p>Download the latest version of Arduino Software (IDE)<br>After installing, open IDE and go to Files -&gt; Preferences and open preference window and see the “Additional Boards Manager URL’s”<br>In the  <strong>“Additional Boards Manager URL’s”</strong>, paste the URL <strong><a href="https://dl.espressif.com/dl/package_esp32_index.json" target="_blank" rel="noopener">https://dl.espressif.com/dl/package_esp32_index.json</a></strong>. </p>
-<p>And click OK.</p>
-<p>Now go to <strong>Tools-&gt; Board-&gt; Board Manager</strong> and search for ESP32 and press install. It will take some time to install make sure that you have internet connection while installing.</p>
-<p>After installing, close the window of board manager and your IDE is ready to work with ESP32.</p>
-<p><strong>Download SDS011 Library</strong></p>
-<p><strong>Download BMP280 Library</strong></p>
-<p>Add SDS011 and BMP280 libraries to Arduino library</p>
-<hr>
-<p><strong>Software guide (ThingSpeak setup for ESP32)</strong></p>
-<p><strong>Firstly,</strong> go to ThingSpeak IoT platform and create an account and sign in to the server.</p>
-<p>After signing in, you will find below window in which number of channels are listed in this go to New channel.</p>
-<p><img src="https://i.loli.net/2020/04/02/KTreUBMcpyXYOEm.png" alt="image.png"></p>
-<p>Click New Channel</p>
-<p>Enter details for 4 fields for 4 types of data we want (Ex. PM2.5, PM10..)<br>After saving the channel, you will find channel stats window showing details about your channels.<br>Now go to API key menu.</p>
-<p> Copy Write API key as this is required during programming of ESP32.</p>
-<p><strong>Hardware guide</strong></p>
-<p>Connect the components as shown in the picture below.<br><img src="https://i.loli.net/2020/04/02/yfth62bjEDpH7T4.png" alt="image.png"></p>
-<p>Connect power to ESP32 (using Micro-B USB cable) and SDS011(with the cable provided with SDS011)</p>
-<p>Clone the project file</p>
-<pre><code>https://github.com/scarlett998-SDS011_ESP32toThingSpeak.git</code></pre><p>Wait for 30 second and restart the devices (Press the restart button on ESP32),<br> so the device will be connected to WiFi and you can see the notification on thingSpeak of the data.</p>
-<p>Click boot button on ESP32<br><img src="https://i.loli.net/2020/04/02/cw29s1OqWT5rnVC.png" alt="image.png"></p>
-<p>Now open the serial monitor and press the reset button of ESP32, it starts connecting to your hotspot.</p>
-<p>After connecting successfully, it starts displaying the PM2.5, PM10, temperature and pressure data on your serial monitor window and sending these values to ThingSpeak.</p>
-<hr>
-<p>Leave a message if you have  any question ^^</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://shenyingzhang.fun/2020/02/26/ESP32DevkitV4/" data-id="ck8hrlr3q0005p8w5hrqi64a9"
+      <a data-url="http://shenyingzhang.fun/2020/02/26/ESP32DevkitV4/" data-id="ck8hrtubs0002agw52jw00hwg"
          class="article-share-link">Share</a>
       
     </footer>
