@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://shenyingzhang.fun/2020/02/26/ESP32DevkitV4/</loc>
+    <lastmod>2020-04-01</lastmod>
+  </url>  <url>
+    <loc>http://shenyingzhang.fun/2020/02/18/AirQuality/</loc>
+    <lastmod>2020-04-01</lastmod>
+  </url>  <url>
     <loc>http://shenyingzhang.fun/2020/03/30/Attemp-to-use-3Dprinting-to-make-a-cover-for-airQuality-sensor/</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
     <loc>http://shenyingzhang.fun/2020/03/12/Visualize-SDS011-on-ThingSpeak/</loc>
     <lastmod>2020-03-16</lastmod>
-  </url>  <url>
-    <loc>http://shenyingzhang.fun/2020/02/18/AirQuality/</loc>
-    <lastmod>2020-03-10</lastmod>
   </url>  <url>
     <loc>http://shenyingzhang.fun/2020/02/26/Working-SDS011-with-ESP32-DevkitV4/</loc>
     <lastmod>2020-02-26</lastmod>
